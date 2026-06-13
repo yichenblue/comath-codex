@@ -1,0 +1,35 @@
+{
+  "task_id": "task_001_example",
+  "agent_type": "literature",
+  "workstream_id": "ws_001_literature",
+  "status": "DRAFT",
+  "execution_mode": "codex_cli",
+  "spawn_status": "NOT_SPAWNED",
+  "assigned_agent_id": null,
+  "parent_task_id": null,
+  "parent_workstream_id": null,
+  "subagent_request_id": null,
+  "objective": "TBD.",
+  "input_files": [
+    "research_question.md",
+    "goals/goal_001.md",
+    "workstreams/ws_001_literature/instructions.md",
+    "workstreams/ws_001_literature/report.md"
+  ],
+  "allowed_write_paths": [
+    "workstreams/ws_001_literature/report.md",
+    "workstreams/ws_001_literature/artifacts/sources.md",
+    "workstreams/ws_001_literature/logs/README.md"
+  ],
+  "required_outputs": [
+    "workstreams/ws_001_literature/report.md"
+  ],
+  "success_criteria": [
+    "Every substantive claim uses a C-### id.",
+    "New notation is avoided unless necessary, and necessary new notation is defined and justified at first use.",
+    "Uncertainty and gaps are marked explicitly."
+  ],
+  "handoff_summary": "",
+  "completion_summary": "",
+  "notes": ""
+}

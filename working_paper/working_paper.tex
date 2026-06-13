@@ -1,0 +1,40 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{marginnote}
+
+\title{Working Paper}
+\author{Codex Co-Mathematician Workspace}
+\date{\today}
+
+\newcommand{\claimnote}[1]{\marginnote{\footnotesize #1}}
+\newcommand{\approvedclaim}[2]{\paragraph{#1}#2\claimnote{Approved claim #1; see claim\_registry.json.}}
+\newcommand{\workingclaim}[2]{\paragraph{#1}#2\claimnote{Working claim; not approved for final use.}}
+
+\begin{document}
+\maketitle
+
+\section{Research Question}
+
+See \texttt{../research\_question.md}. No project-specific research question has been approved yet.
+
+\section{Current State}
+
+This is a working document. Claims must be traced to workstream reports, artifacts, reviews, or user input.
+
+\section{Results}
+
+Approved claims from completed workstreams are inserted below.
+
+\input{approved_claims.tex}
+
+\section{Failed Explorations}
+
+See \texttt{../failed\_explorations/}. No failed exploration has been recorded yet.
+
+\section{Open Questions}
+
+Open questions will be tracked in active workstream reports and annotations.
+
+\end{document}
