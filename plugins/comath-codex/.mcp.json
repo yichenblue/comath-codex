@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "comath_codex": {
+      "command": "python3",
+      "args": [
+        "scripts/mcp_scaffold_server.py"
+      ],
+      "env_vars": [
+        "COMATH_CODEX_REPO_ROOT"
+      ],
+      "startup_timeout_sec": 10,
+      "tool_timeout_sec": 60,
+      "enabled": true
+    }
+  }
+}

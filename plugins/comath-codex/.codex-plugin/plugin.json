@@ -1,0 +1,39 @@
+{
+  "name": "comath-codex",
+  "version": "0.1.0",
+  "description": "Repo-local AI co-mathematician scaffold for hard-gated mathematical research workflows.",
+  "author": {
+    "name": "Yichen Wang",
+    "url": "https://github.com/yichenblue"
+  },
+  "homepage": "https://github.com/yichenblue/comath-codex",
+  "repository": "https://github.com/yichenblue/comath-codex",
+  "keywords": [
+    "codex",
+    "agent",
+    "mathematics",
+    "research",
+    "review",
+    "computation"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Comath Codex",
+    "shortDescription": "Hard-gated mathematical research workflow",
+    "longDescription": "Comath Codex packages a repo-local AI co-mathematician workflow with project briefs, goals, workstreams, proof/computation/literature/reviewer workers, claim registry updates, working-paper synthesis, and hard-gated promotion.",
+    "developerName": "Yichen Wang",
+    "category": "Productivity",
+    "capabilities": [
+      "Write",
+      "Review"
+    ],
+    "websiteURL": "https://github.com/yichenblue/comath-codex",
+    "defaultPrompt": [
+      "Use $comath-codex to run a hard-gated research cycle.",
+      "Use $comath-codex to review a workstream.",
+      "Use $comath-codex to update approved claims."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

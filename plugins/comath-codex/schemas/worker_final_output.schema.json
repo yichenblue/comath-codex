@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Comath Codex Worker Final Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "task_id",
+    "agent_type",
+    "workstream_id",
+    "completion_status",
+    "summary",
+    "outputs_written",
+    "claims",
+    "evidence",
+    "uncertainty_and_gaps",
+    "failed_attempts",
+    "next_steps",
+    "review",
+    "computation",
+    "paper_source_changes"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "enum": [1]
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "agent_type": {
+      "type": "string",
+      "enum": [
+        "literature",
+        "proof",
+        "computation",
+        "reviewer",
+        "synthesis",
+        "workstream_coordinator"
+      ]
+    },
+    "workstream_id": {
+      "type": "string"
+    },
+    "completion_status": {
+      "type": "string",
+      "enum": [
+        "done",
+        "blocked",
+        "needs_followup"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "outputs_written": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "claim_id",
+          "text",
+          "status"
+        ],
+        "properties": {
+          "claim_id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "approved_by_worker",
+              "blocked",
+              "not_applicable"
+            ]
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "uncertainty_and_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failed_attempts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "approved_claims",
+        "blocked_claims"
+      ],
+      "properties": {
+        "decision": {
+          "type": "string"
+        },
+        "approved_claims": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocked_claims": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "computation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tests_run",
+        "tests_passed",
+        "test_summary"
+      ],
+      "properties": {
+        "tests_run": {
+          "type": "boolean"
+        },
+        "tests_passed": {
+          "type": "boolean"
+        },
+        "test_summary": {
+          "type": "string"
+        }
+      }
+    },
+    "paper_source_changes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "proposed_patch",
+        "direct_source_edit",
+        "summary"
+      ],
+      "properties": {
+        "proposed_patch": {
+          "type": "boolean"
+        },
+        "direct_source_edit": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

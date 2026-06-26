@@ -24,6 +24,8 @@
   "required_outputs": [
     "workstreams/ws_001_literature/report.md"
   ],
+  "structured_output_required": true,
+  "output_schema": "schemas/worker_final_output.schema.json",
   "success_criteria": [
     "Every substantive claim uses a C-### id.",
     "New notation is avoided unless necessary, and necessary new notation is defined and justified at first use.",

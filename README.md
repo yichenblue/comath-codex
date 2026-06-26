@@ -14,6 +14,8 @@ The scaffold is intentionally product-light. It does not try to build a web UI f
 
 ```text
 comath-codex/
+  .agents/skills/comath-codex/
+  .codex/hooks.json
   project_brief.md
   research_question.md
   goals/
@@ -25,6 +27,82 @@ comath-codex/
   working_paper/
   failed_explorations/
 ```
+
+## Codex Integration
+
+This repository includes a repo-local Codex skill at
+`.agents/skills/comath-codex/`. Invoke it explicitly as `$comath-codex` or let
+Codex use it implicitly for scaffold, workstream, worker, reviewer, claim
+registry, and working-paper tasks.
+
+The repository also includes Codex lifecycle hooks under `.codex/`. The hooks
+embed the scaffold's hard gates into Codex by checking promotion and claim
+registry actions before they run, and by running lightweight scaffold validation
+at turn stop. If Codex reports that hooks need trust review, inspect them with
+the Codex hook UI and trust the repo-local hook definitions before relying on
+them.
+
+## Plugin Packaging
+
+This repository is also packaged as a local Codex plugin:
+
+```text
+.agents/plugins/marketplace.json
+plugins/comath-codex/
+  .codex-plugin/plugin.json
+  skills/comath-codex/
+  scripts/
+  schemas/
+  prompts/
+  hooks/
+```
+
+The repo marketplace points to `./plugins/comath-codex`. Restart Codex after
+pulling plugin changes so the app can rediscover the local marketplace and the
+packaged `$comath-codex` skill.
+
+The plugin package includes the hard-gate hook script as a resource, but it
+does not auto-install lifecycle hooks into arbitrary target repositories.
+Repo-local hooks remain under `.codex/` because they depend on the scaffold
+state layout in the current repository and should be reviewed/trusted per
+project.
+
+Validate the packaged plugin with:
+
+```text
+python3 /path/to/plugin-creator/scripts/validate_plugin.py plugins/comath-codex
+```
+
+## MCP Server
+
+The repo-local MCP server is `scripts/mcp_scaffold_server.py`. The project
+config in `.codex/config.toml` registers it as `comath_codex`.
+
+Initial tools are read-only:
+
+- `list_project_state`
+- `list_workstreams`
+- `get_workstream`
+- `list_tasks`
+- `check_report_ready`
+- `run_health_check`
+
+These tools expose scaffold state to Codex without requiring ad hoc shell
+parsing. Mutating operations such as promotion, collection, or lock recovery
+remain script-gated and are not exposed as MCP tools by default.
+
+## Automations
+
+Automation prompt templates live under `automations/`. The default health-check
+entry point is:
+
+```text
+python3 scripts/automation_health_check.py --json
+```
+
+Use Codex app automations for scheduled read-only maintenance such as daily
+health checks or unfinished-workstream audits. Keep scheduled jobs read-only
+unless a user explicitly approves a mutating automation.
 
 ## Minimal Workflow
 
@@ -110,6 +188,8 @@ Runtime state is stored in:
 - `state/write_locks.json` for active write ownership;
 - `state/message_queue.jsonl` for coordination events.
 - `agent_runs/` for worker prompts, JSONL Codex events, stderr logs, exit status, pre-run manifests, and diff validation results.
+- `schemas/worker_final_output.schema.json` for machine-readable worker final
+  summaries enforced through `codex exec --output-schema`.
 
 Parallel worker flow:
 
@@ -135,6 +215,9 @@ python3 scripts/collect_task_cli.py tasks/<task-id>.json
 ```
 
 Collection rejects failed exits, missing run metadata, missing required outputs, invalid reviewer JSON, failed computation tests, and any file diff outside `allowed_write_paths`. If the runner metadata is missing or malformed, or if the worker process is gone but no `exit_status.json` exists, collection records a failed exploration, marks the task `BLOCKED`, and releases its write locks. If the process is still alive, collection exits with status `2` and leaves the task running.
+For `codex_cli` workers, collection also requires the final assistant message to
+parse as JSON conforming to `schemas/worker_final_output.schema.json`; the
+parsed object is stored as `agent_runs/.../final_output.json`.
 
 For simple polling, always provide an explicit scope. This prevents the
 scheduler from accidentally spawning or collecting historical tasks from older
@@ -275,14 +358,19 @@ python3 scripts/run_standard_task.py \
 ```
 
 The literature worker writes `artifacts/search_plan.md`,
+`artifacts/search_plan.json`,
 `artifacts/literature_search_results.json`, `artifacts/literature_search.md`,
 `artifacts/followup_queries.md`,
+`artifacts/citation_graph.json`, `artifacts/citation_graph.md`,
+`artifacts/search_coverage_validation.json`,
 `artifacts/literature_sources/source_manifest.json`,
 `artifacts/extracted_theorem_statements.json`,
 `artifacts/extracted_theorem_statements.md`, `artifacts/sources.md`,
 `artifacts/theorem_statements.md`,
 `artifacts/theorem_applicability_matrix.md`,
+`artifacts/theorem_applicability_matrix.json`,
 `artifacts/theorem_statement_verification.json`,
+`artifacts/theorem_applicability_validation.json`,
 `artifacts/literature_gaps.md`, and `report.md`. Its claims must be reviewed
 before downstream work treats them as approved context.
 
@@ -291,16 +379,23 @@ The literature worker can run the repo-local retrieval layer:
 ```text
 python3 scripts/literature_search.py \
   --workstream workstreams/<literature-workstream-id> \
-  --query "<mathematical query>"
+  --query "<mathematical query>" \
+  --pages 2
 ```
 
 By default this searches repo-local sources and, when network access is
-available, arXiv, Semantic Scholar, and Crossref. Results are written to
+available, arXiv, Semantic Scholar, and Crossref. Local search uses BM25-style
+ranking. The external providers use multiple recall strategies: arXiv runs
+all/title/abstract variants across pages; Semantic Scholar runs paginated paper
+search with external ids, citation/reference counts, fields of study, and
+open-access PDF metadata; Crossref runs bibliographic, title, and general query
+routes. Results are written to
 `artifacts/literature_search_results.json` and
 `artifacts/literature_search.md`. Provider failures are recorded as evidence;
 the worker must mark unavailable sources as `not verified` rather than guessing.
 Promotion also requires a filled search plan, follow-up query log, and theorem
-applicability matrix. These artifacts must not contain `TBD`.
+applicability matrix, plus passing search-coverage and theorem-applicability
+validation artifacts. These artifacts must not contain `TBD`.
 
 Attach the gate with:
 

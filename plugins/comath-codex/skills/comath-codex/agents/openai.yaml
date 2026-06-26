@@ -1,0 +1,6 @@
+interface:
+  display_name: "Comath Codex"
+  short_description: "Hard-gated mathematical research workflow"
+  default_prompt: "Use $comath-codex to run a hard-gated mathematical research cycle for this task."
+policy:
+  allow_implicit_invocation: true
